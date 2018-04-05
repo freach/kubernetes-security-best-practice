@@ -39,7 +39,7 @@ Port | Process | Description
 9099/TCP | calico-felix | Health check server for Calico (if using Calico/Canal)
 6443/TCP | kube-apiserver | Kubernetes API port
 
-Health check ports are no security threat per se by the information they expose, but critical components like the network provider could be DoSed through an exposed health check port, which would affect the hole cluster.
+Health check ports are no security threat per se by the information they expose, but critical components like the network provider could be DoSed through an exposed health check port, which would affect the whole cluster.
 
 ## Bastion host
 
