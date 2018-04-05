@@ -1,5 +1,7 @@
 # Kubernetes Security - Best Practice Guide
 
+This document acts as a best practice guide to Kubernetes Security. K8s is a powerful platform which can be abused in many ways if not configured properly. Contributors of this guide are running Kubernetes in production and worked on several K8s projects to learn about security flaws the hard way.
+
 ## Your cluster is as secure as the system running it
 
 Before you start looking into Kubernetes security specifics you should start
@@ -69,12 +71,6 @@ For AWS only, you should definitely firewall access to the EC2 metdata API throu
 curl -s http://169.254.169.254/latest/user-data
 ```
 
-## Kubernetes Dashboard
-
-Typically, the kubernetes-dashboard plugin is granted a Service Account with full cluster access to be able to see and manage all aspects of the cluster.
-
-TBD
-
 ## Auto mount default Service Account
 
 The *Admission Controller* ensures that all Pods have a Service Account assigned by default, which is called "default". The credentials for this Service Account will be mounted into the containers file system running in the Pod unless the auto mounting feature is disabled. The mounted token can be used to query the Kubernetes API.
@@ -96,3 +92,9 @@ Check [Kubernetes Network Policy Recipes](https://github.com/ahmetb/kubernetes-n
 ## Restrict "docker image pull"
 
 Docker images are a completely uncontrolled environment. Everyone with access to the Docker socket or Kubernetes API can pull any image they like. Because of that many Kubernetes clusters secretly became Bitcoin miners, because of infected Docker images or Kubernetes security issues. The Docker plugin [Docker Image policy plugin](https://github.com/freach/docker-image-policy-plugin) will help you with that problem. The plugin hooks into the internal Docker API and enforces a set of black and white list rules to restrict what images can be pulled.
+
+## Kubernetes Dashboard
+
+Typically, the kubernetes-dashboard plugin is granted a Service Account with full cluster access to be able to see and manage all aspects of the cluster.
+
+TBD
