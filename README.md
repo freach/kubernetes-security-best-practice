@@ -87,9 +87,12 @@ This will disable the auto mounting of the Service Account token and needs to be
 
 **Note** For every new namespace, the *Admission Controller* will create the *default* Service Account. Changes to this Service Account need be applied accordingly.
 
-
 ## Use Network Policies
 
 [Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/) are firewall rules for Kubernetes. If you're using a network provider, which supports Network Policies you should definitely use them to secure internal cluster communication and external cluster access. By default there are no restrictions in place to limit Pods from communicating with each other.
 
 Check [Kubernetes Network Policy Recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) for an awesome starting point. If you're network provider doesn't support network policies, consider switching to one which does, check [https://kubernetes.io/docs/concepts/cluster-administration/networking/](https://kubernetes.io/docs/concepts/cluster-administration/networking/).
+
+## Restrict "docker image pull"
+
+Docker images are a completely uncontrolled environment. Everyone with access to the Docker socket or Kubernetes API can pull any image they like. Because of that many Kubernetes clusters secretly became Bitcoin miners, because of infected Docker images or Kubernetes security issues. The Docker plugin [Docker Image policy plugin](https://github.com/freach/docker-image-policy-plugin) will help you with that problem. The plugin hooks into the internal Docker API and enforces a set of black and white list rules to restrict what images can be pulled.
