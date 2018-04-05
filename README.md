@@ -47,13 +47,17 @@ Don't provide straight public SSH access to each Kubernetes node, use a bastion 
 
 For general SSH hardening check [Hardening OpenSSH](https://dev.gentoo.org/~swift/docs/security_benchmarks/openssh.html) and the OpenSSH chapter in [Applied Crypto Hardening](https://bettercrypto.org/static/applied-crypto-hardening.pdf) by bettercrypto.org.
 
-## API authorization mode
+## Kubernetes Security Scan with kube-bench
 
-Some installers like *kops* will use the *AlwaysAllow* authorization mode for the cluster. This would grant any authenticated entity full cluster access. Instead *RBAC* should be used for Role-based access control. To find out what your current configuration is, check the *--authorization-mode* parameter of your *kube-apiserver* processes. More information on that topic at [https://kubernetes.io/docs/admin/authorization/](https://kubernetes.io/docs/admin/authorization/).
+A very helpful tool to eliminate like 95% of the configuration flaws is [kube-bench](https://github.com/aquasecurity/kube-bench). It checks a master or a node by applying the [CIS Kubernetes Benchmark](https://www.cisecurity.org/benchmark/kubernetes/) and outputs very specific guidelines to secure your cluster setup. This should be the first step before going through any specific Kubernetes security issues or security enhancements.
+
+## API authorization mode & anonymous auth
+
+Some installers like *kops* will use the *AlwaysAllow* authorization mode for the cluster. This would grant any authenticated entity full cluster access. Instead *RBAC* should be used for Role-based access control. To find out what your current configuration is, check the *--authorization-mode* parameter of your *kube-apiserver* processes. More information on that topic at [https://kubernetes.io/docs/admin/authorization/](https://kubernetes.io/docs/admin/authorization/). To enforce authentication make sure anonymous auth is disabled by setting *--anonymous-auth=false*.
 
 **Note** This doesn't affect the *kubelet* authorization mode. *kubelet* itself exposes an API to execute commands through which the Kubernetes API can be bypassed completely.
 
-## Kubelet authorization mode
+## Kubelet authorization mode & anonymous auth
 
 *Kubelet* offers a command API used by *kube-apiserver* through which arbitrary commands can be executed on the specific node. On top of firewalling the port (10250/TCP) from public access, the *kubelet* settings *--authorization-mode=Webhook* and *--anonymous-auth=false* should be ensured.
 
