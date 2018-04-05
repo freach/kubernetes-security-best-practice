@@ -43,7 +43,7 @@ Health check ports are no security threat per se by the information they expose,
 
 ## Bastion host
 
-Don't provide straight public SSH access to each Kubernetes node, use a bastion host setup where you expose SSH only on one specific host from which you SSH into all other hosts. There are quiet a few articles on how to do this, for example [https://www.nadeau.tv/ssh-with-a-bastion-host/](https://www.nadeau.tv/ssh-with-a-bastion-host/). Also SSH session recording as described in [https://aws.amazon.com/blogs/security/how-to-record-ssh-sessions-established-through-a-bastion-host/](https://aws.amazon.com/blogs/security/how-to-record-ssh-sessions-established-through-a-bastion-host/) can be useful.
+Don't provide straight public SSH access to each Kubernetes node, use a bastion host setup where you expose SSH only on one specific host from which you SSH into all other hosts. There are quite a few articles on how to do this, for example [https://www.nadeau.tv/ssh-with-a-bastion-host/](https://www.nadeau.tv/ssh-with-a-bastion-host/). Also SSH session recording as described in [https://aws.amazon.com/blogs/security/how-to-record-ssh-sessions-established-through-a-bastion-host/](https://aws.amazon.com/blogs/security/how-to-record-ssh-sessions-established-through-a-bastion-host/) can be useful.
 
 For general SSH hardening check [Hardening OpenSSH](https://dev.gentoo.org/~swift/docs/security_benchmarks/openssh.html) and the OpenSSH chapter in [Applied Crypto Hardening](https://bettercrypto.org/static/applied-crypto-hardening.pdf) by bettercrypto.org.
 
