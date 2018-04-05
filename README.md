@@ -70,3 +70,15 @@ curl -s http://169.254.169.254/latest/user-data
 Typically, the kubernetes-dashboard plugin is granted a Service Account with full cluster access to be able to see and manage all aspects of the cluster.
 
 TBD
+
+## Auto mount default Service Account
+
+The *Admission Controller* ensures that all Pods have a Service Account assigned by default, which is called "default". The credentials for this Service Account will be mounted into the containers running in the Pod unless the auto mounting feature is disabled. The mounted token can be used to query the Kubernetes API.
+
+```sh
+kubectl patch serviceaccount default -p "automountServiceAccountToken: false"
+```
+
+This will disable the auto mounting of the Service Account token and needs to be done on a per namespace basis.
+
+*Note* For every new namespace, the *Admission Controller* will create the *default* Service Account. Changes to this Service Account need be applied accordingly.
