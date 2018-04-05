@@ -86,3 +86,10 @@ kubectl patch serviceaccount default -p "automountServiceAccountToken: false"
 This will disable the auto mounting of the Service Account token and needs to be done on a per namespace basis.
 
 **Note** For every new namespace, the *Admission Controller* will create the *default* Service Account. Changes to this Service Account need be applied accordingly.
+
+
+## Use Network Policies
+
+[Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/) are firewall rules for Kubernetes. If you're using a network provider, which supports Network Policies you should definitely use them to secure internal cluster communication and external cluster access. By default there are no restrictions in place to limit Pods from communicating with each other.
+
+Check [Kubernetes Network Policy Recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) for an awesome starting point. If you're network provider doesn't support network policies, consider switching to one which does, check [https://kubernetes.io/docs/concepts/cluster-administration/networking/](https://kubernetes.io/docs/concepts/cluster-administration/networking/).
