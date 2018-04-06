@@ -23,10 +23,10 @@ kops create cluster --topology private --networking calico ...
 
 ## Firewall ports
 
-This is a general security best practice, never expose a port, which don't need exposure. IMHO defining port exposure should be done in the following order:
+This is a general security best practice, never expose a port, which doesn't need exposure. IMHO, defining port exposure should be done in the following order:
 
 * Check if you can define a listen IP/interface to bind the service to, if possible 127.0.0.1/lo
-* If a listen IP/interface is not possible firewall the port
+* If a listen IP/interface is not possible, then firewall the port
 
 Kubernetes processes like *kubelet* are opening a few ports on all network interfaces, which should be firewalled from public access. Those ports may "only" allow to query for sensitive information, but some of them allow straight full access to your cluster.
 
@@ -39,7 +39,7 @@ Port | Process | Description
 9099/TCP | calico-felix | Health check server for Calico (if using Calico/Canal)
 6443/TCP | kube-apiserver | Kubernetes API port
 
-Health check ports are no security threat per se by the information they expose, but critical components like the network provider could be DoSed through an exposed health check port, which would affect the whole cluster.
+Health check ports are no security threat per se by the information they expose, but critical components like the network provider could be DoSed through an exposed health check port, which would affect the whole cluster. Additionally, unknown exploits could potentially endanger security.
 
 ## Bastion host
 
