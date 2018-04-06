@@ -105,6 +105,10 @@ Typically, the kubernetes-dashboard plugin is granted a Service Account with ful
 
 *To be done*
 
+### Securing a Cluster (by Kubernetes project)
+
+The Kubernetes project itself also has some notes on how to secure a cluster. See the [Securing a Cluster](https://kubernetes.io/docs/tasks/administer-cluster/securing-a-cluster/) chapter from the Kubernetes docs.
+
 ## Cloud Provider Guide
 
 * [AWS](AWS.md)
