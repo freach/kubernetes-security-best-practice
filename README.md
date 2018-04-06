@@ -103,4 +103,6 @@ Ultimately Docker is pulling an image, so securing Docker is considered a good a
 
 Typically, the kubernetes-dashboard plugin is granted a Service Account with full cluster access to be able to see and manage all aspects of the cluster.
 
+Many people expose their kubernetes-dashboard to the Internet. Please don't be one of these people.
+
 TBD
