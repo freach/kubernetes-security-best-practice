@@ -101,11 +101,13 @@ Ultimately Docker is pulling an image, so securing Docker is considered a good a
 
 ### Kubernetes Dashboard :boom:
 
-Prio to version 1.8.0, the `kubernetes-dashboard` plugin was granted a Service Account with full cluster access to be able to see and manage all aspects of the cluster. 
+Prio to version 1.8.0, the `kubernetes-dashboard` plugin was granted a Service Account with full cluster access to be able to see and manage all aspects of the cluster.
 
 Verify that there is no ClusterRolebinding to `cluster-admin` left behind. Otherwise clicking `SKIP` on the sign-in page will grant full access.
 
 `kubectl -n kube-system get clusterrolebinding kubernetes-dashboard -o yaml`
+
+By default the dashboard is not exposed to the public Internet and it should be avoided to change that. Reasons why we could see with the [Tesla hack discovered by RedLock](https://blog.redlock.io/cryptojacking-tesla).
 
 ### Securing a Cluster (by Kubernetes project)
 
