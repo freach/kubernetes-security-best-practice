@@ -1,6 +1,6 @@
 # Kubernetes Security - Best Practice Guide
 
-This document acts as a best practice guide to Kubernetes security. K8s is a powerful platform which can be abused in many ways if not configured properly. Contributors to this guide are running Kubernetes in production and worked on several K8s projects to learn about security flaws the hard way.
+This document acts as a best practice guide to Kubernetes security. K8s is a powerful platform which can be abused in many ways if not configured properly. The authors of this guide are running Kubernetes in production and worked on several K8s projects to learn about security flaws the hard way.
 
 * [General Security Guide](#general)
 * [Cloud Provider Security Guide](#cloud-provider-guide)
@@ -120,3 +120,9 @@ The Kubernetes project itself also has some notes on how to secure a cluster. Se
 ## Installer Guide
 
 * [kops](kops.md)
+
+## Author
+
+* [Simon Pirschel](https://aboutsimon.com/) - Kubernetes Consultant & DevOps Specialist
+
+Thanks to all the contributors to this guide assuring good quality.
