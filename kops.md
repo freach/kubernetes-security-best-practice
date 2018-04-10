@@ -39,8 +39,8 @@ The important bits:
 
 #### Insecure Port :cloud:
 
-It's recommended to disable the insecure (non TLS) port for the API. At the time (kops 1.8.1) the insecure port can't be closed
-because of the API health check ([Issue 43784](https://github.com/kubernetes/kubernetes/issues/43784)). The port will not be exposed in the network by default and the API ELB is targeting the secure port, so it's still considered OK. In coming Kubernetes releases the `--insecure-port` option will be deprecated.
+It's recommended to disable the insecure (non TLS, non auth, non authz) port for the API. At the time (kops 1.8.1) the insecure port can't be closed
+because of the API health check ([Issue 43784](https://github.com/kubernetes/kubernetes/issues/43784)). The port will not be exposed in the network by default and the API ELB is targeting the secure port, so it's considered OKish. From Kubernetes v1.10 the `--insecure-port` option will be deprecated.
 
 #### Disable Profiling :cloud:
 
@@ -66,7 +66,6 @@ spec:
     - ResourceQuota
     - AlwaysPullImages
     - DenyEscalatingExec
-    - PodSecurityPolicy
 ```
 
 ### Deploy cluster
@@ -77,6 +76,10 @@ Apply/deploy and validated the cluster setup ...
 kops update cluster $NAME --yes
 kops validate cluster $NAME
 ```
+
+### Add and enable PodSecurityPolicy
+
+*Work in progress*
 
 ### Apply OS security updates :fire:
 
