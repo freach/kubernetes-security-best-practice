@@ -65,13 +65,57 @@ For general SSH hardening check [Hardening OpenSSH](https://dev.gentoo.org/~swif
 
 A very helpful tool to eliminate roughly 95% of the configuration flaws is [kube-bench](https://github.com/aquasecurity/kube-bench). A master or a node and their control-plane components are checked by applying the [CIS Kubernetes Benchmark](https://www.cisecurity.org/benchmark/kubernetes/) which results in specific guidelines to secure your cluster setup. This should be a first step before going through any specific Kubernetes security issues or security enhancements.
 
-### API authorization mode & anonymous auth :boom:
+### API settings
+
+#### Authorization mode & anonymous auth :boom:
 
 Some installers like *kops* will use the *AlwaysAllow* authorization mode for the cluster. This would grant any authenticated entity full cluster access. Instead, *RBAC* should be used for role-based access control. To find out what your current configuration is, check the *--authorization-mode* parameter of your *kube-apiserver* processes. More information on that topic at [https://kubernetes.io/docs/admin/authorization/](https://kubernetes.io/docs/admin/authorization/). To enforce authentication, make sure anonymous auth is disabled by setting *--anonymous-auth=false*.
 
 **Note** This doesn't affect the *kubelet* authorization mode. The *kubelet* itself exposes an API to execute commands through which the Kubernetes API can be bypassed completely.
 
-### Kubelet authorization mode & anonymous auth :boom:
+#### Insecure Port :fire:
+
+It's recommended to disable the insecure (non TLS) port for the API by setting `--insecure-port=0`. Sometimes it's not possible, because of health check configuration. If that's the case firewall the port from public access. In coming Kubernetes releases the `--insecure-port` option will be deprecated.
+
+#### Disable Profiling :cloud:
+
+It's recommended to disable the profiling API endpoint by setting `--profiling=false`.
+
+**Why?**
+
+Sensible program or system information can be uncovered by profiling data and because of the amount of data and load induced by profiling your cluster could be DoSed by this feature.
+
+#### AdmissionController
+
+Add the following plugins to `--admission-control=`
+
+##### AlwaysPullImages :cloud:
+
+`--admission-control=...,AlwaysPullImages`
+
+**Why?**
+
+By default Pods can specify there own image pull policy. Once an image is pulled (even if once pulled from a secured registry with credentials) other Pods could reuse the locally stored image and get access to potentially confidential information. By enabling the `AlwaysPullImages` policy the controller modifies every new Pod to force the image pull policy to Always, which ensures that credentials need to be provided every time.
+
+##### DenyEscalatingExec :boom:
+
+`--admission-control=...,DenyEscalatingExec`
+
+**Why?**
+
+If pods are scheduled with `privileged: true`, `hostPID: true` or `hostIPC: true` it's possible to escalate privileges through attaching to a privileged pod or executing a command in it. The `DenyEscalatingExec` denies attach and exec for such Pods.
+
+##### PodSecurityPolicy :boom:
+
+`--admission-control=...,PodSecurityPolicy`
+
+**Why?**
+
+If `PodSecurityPolicy` is not enabled, defined [Pod Security Policies](https://kubernetes.io/docs/concepts/policy/pod-security-policy/) are not enforced and Pods violating defined policies will still be scheduled.
+
+### Kublet settings
+
+#### Authorization mode & anonymous auth :boom:
 
 The *kubelet* offers a command API used by *kube-apiserver* through which arbitrary commands can be executed on the specific node. On top of firewalling the port (10250/TCP) from public access, the *kubelet* settings *--authorization-mode=Webhook* and *--anonymous-auth=false* should be ensured.
 
