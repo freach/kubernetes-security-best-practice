@@ -13,6 +13,11 @@ The severity or importance of each topic is indicated by an emoji in the topic n
 * :cloud: Medium
 * :partly_sunny: Low
 
+If you're more into watching talks on YouTube, here are some really nice ones:
+
+* [Hacking and Hardening Kubernetes Clusters by Example [I] - Brad Geesaman, Symantec](https://www.youtube.com/watch?v=vTgQLzeBfRU)
+* [Shipping in Pirate-Infested Waters: Practical Attack and Defense in Kubernetes [A] - Greg Castle](https://www.youtube.com/watch?v=ohTq0no0ZVU)
+
 ## General
 
 ### Your cluster is as secure as the system running it :fire:
