@@ -121,7 +121,11 @@ If `PodSecurityPolicy` is not enabled, defined [Pod Security Policies](https://k
 
 The *kubelet* offers a command API used by *kube-apiserver* through which arbitrary commands can be executed on the specific node. On top of firewalling the port (10250/TCP) from public access, the *kubelet* settings *--authorization-mode=Webhook* and *--anonymous-auth=false* should be ensured.
 
-## Auto mount default Service Account :partly_sunny:
+## Auto mount default Service Account
+
+**With RBAC enabled: :partly_sunny:**
+
+**Without RBAC enabled: :boom:**
 
 The *Admission Controller* ensures that all Pods have a Service Account assigned by default, which is called "default". The credentials for this Service Account will be mounted into the containers file system running in the Pod unless the auto mounting feature is disabled. The mounted token can be used to query the Kubernetes API.
 
@@ -154,6 +158,22 @@ Verify that there is no ClusterRolebinding to `cluster-admin` left behind. Other
 `kubectl -n kube-system get clusterrolebinding kubernetes-dashboard -o yaml`
 
 By default the dashboard is not exposed to the public Internet and it should be avoided to change that. Reasons why we could see with the [Tesla hack discovered by RedLock](https://blog.redlock.io/cryptojacking-tesla).
+
+If you're using a network provider plugin which supports network policies you should also block requests to the dashboard coming from inside the cluster (other Pods). This will not block requests coming through `kubectl proxy`.
+
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-dashboard
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: kubernetes-dashboard
+  policyTypes:
+  - Ingress
+```
 
 ### Securing a Cluster (by Kubernetes project)
 
