@@ -73,9 +73,9 @@ Some installers like *kops* will use the *AlwaysAllow* authorization mode for th
 
 **Note** This doesn't affect the *kubelet* authorization mode. The *kubelet* itself exposes an API to execute commands through which the Kubernetes API can be bypassed completely.
 
-#### Insecure Port :fire:
+#### Insecure Port :boom:
 
-It's recommended to disable the insecure (non TLS) port for the API by setting `--insecure-port=0`. Sometimes it's not possible, because of health check configuration. If that's the case firewall the port from public access. In coming Kubernetes releases the `--insecure-port` option will be deprecated.
+The insecure port (especially relevant for older Kubernetes releases) is an API port without any kind of protection. No SSL/TLS, no auth, no authz! This port really should be disabled by setting `--insecure-port=0`. Sometimes it's not possible, because of health check configuration or bootstrapping mechanisms. If that's the case firewall the port from public and internal access. This flag is deprecated since v1.10.
 
 #### Disable Profiling :cloud:
 
@@ -112,6 +112,8 @@ If pods are scheduled with `privileged: true`, `hostPID: true` or `hostIPC: true
 **Why?**
 
 If `PodSecurityPolicy` is not enabled, defined [Pod Security Policies](https://kubernetes.io/docs/concepts/policy/pod-security-policy/) are not enforced and Pods violating defined policies will still be scheduled.
+
+**Warning:** Before enabling `PodSecurityPolicy` you should have Pod security policies already in place or Pods will fail to be scheduled.
 
 ### Kublet settings
 
