@@ -118,7 +118,7 @@ If pods are scheduled with `privileged: true`, `hostPID: true` or `hostIPC: true
 
 If `PodSecurityPolicy` is not enabled, defined [Pod Security Policies](https://kubernetes.io/docs/concepts/policy/pod-security-policy/) are not enforced and Pods violating defined policies will still be scheduled.
 
-**Warning:** Before enabling `PodSecurityPolicy` you should have Pod security policies already in place or Pods will fail to be scheduled. See [Use Pod Security Policies](#use-pod-security-policies) for a basic setup.
+**Warning:** Before enabling `PodSecurityPolicy` you should have Pod security policies already in place or Pods will fail to be scheduled. See [Use Pod Security Policies](#use-pod-security-policies-cloud) for a basic setup.
 
 ### Kublet settings
 
