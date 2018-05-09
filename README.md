@@ -118,7 +118,7 @@ If pods are scheduled with `privileged: true`, `hostPID: true` or `hostIPC: true
 
 If `PodSecurityPolicy` is not enabled, defined [Pod Security Policies](https://kubernetes.io/docs/concepts/policy/pod-security-policy/) are not enforced and Pods violating defined policies will still be scheduled.
 
-**Warning:** Before enabling `PodSecurityPolicy` you should have Pod security policies already in place or Pods will fail to be scheduled.
+**Warning:** Before enabling `PodSecurityPolicy` you should have Pod security policies already in place or Pods will fail to be scheduled. See [Use Pod Security Policies](#use-pod-security-policies) for a basic setup.
 
 ### Kublet settings
 
@@ -132,21 +132,131 @@ The *kubelet* offers a command API used by *kube-apiserver* through which arbitr
 
 **Without RBAC enabled: :boom:**
 
-The *Admission Controller* ensures that all Pods have a Service Account assigned by default, which is called "default". The credentials for this Service Account will be mounted into the containers file system running in the Pod unless the auto mounting feature is disabled. The mounted token can be used to query the Kubernetes API.
+The *Admission Controller* ensures that all Pods have a service account assigned by default, which is called "default". The credentials for this service account will be mounted into the containers file system running in the Pod unless the auto mounting feature is disabled. The mounted token can be used to query the Kubernetes API.
 
 ```sh
 kubectl patch serviceaccount default -p "automountServiceAccountToken: false"
 ```
 
-This will disable the auto mounting of the Service Account token and needs to be done on a per namespace basis.
+This will disable the auto mounting of the service account token and needs to be done on a per namespace basis.
 
-**Note** For every new namespace, the *Admission Controller* will create the *default* Service Account. Changes to this Service Account need be applied accordingly.
+**Note** For every new namespace, the *Admission Controller* will create the *default* service account. Changes to this service account need be applied accordingly.
 
 ### Use Network Policies :cloud:
 
 [Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/) are firewall rules for Kubernetes. If you're using a network provider which supports Network Policies, you should definitely use them to secure internal cluster communication and external cluster access. By default, there are no restrictions in place to limit pods from communicating with each other.
 
 Check [Kubernetes Network Policy Recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) for an awesome starting point. If your network provider doesn't support network policies, consider switching to one which does, check [https://kubernetes.io/docs/concepts/cluster-administration/networking/](https://kubernetes.io/docs/concepts/cluster-administration/networking/).
+
+### Use Pod Security Policies :cloud:
+
+Pod security policies allow for controlling security sensitive aspects of the pod specification.
+
+**Why?**
+
+Most (almost all) of your Pods don't need privileged access or even host access, so it should be ensured that a Pod requesting such access needs to be white listed explicitly. By default no one should be able to request privileges above the default to avoid being vulnerable through misconfiguration or malicious content of a Docker image.
+
+A very basic setup consists of a unprivileged and a privileged policy. The unprivileged is called "default" and the privileged is called, well, "privileged".
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/default.psp.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/privileged.psp.yaml
+```
+
+Pod Security Policies are evaluated based on access to the policy. When multiple policies are available, the pod security policy controller selects policies in the following order:
+
+1. If any policies successfully validate the pod without altering it, they are used.
+1. If it is a pod creation request, then the first valid policy in alphabetical order is used.
+1. Otherwise, if it is a pod update request, an error is returned, because pod mutations are disallowed during update operations.
+
+In order to use a policy, the requesting user **or** target pod's service account must be authorized to use the policy, by allowing the *use* verb on the policy. So, when defining access rules for policies, we need to think about which user is creating/updating the Pod. The user is different if a Pod is created directly through *kubectl* or through a deployment.
+
+First we make sure, that any user has access to the *default* policy, which ensures that Pods will be unprivileged by default.
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/default-psp.clusterrolebinding.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/default-psp.clusterrole.yaml
+```
+
+Some Pods in the cluster, especially if *kube-apiserver*, *kube-controller-manager*, *kube-scheduler* or *etcd* are running inside the cluster, need privileged access. To ensure those services will still start after introducing the *PodSecurityPolicy* controller, we need to grant cluster nodes and the legacy kubelet user access to the privileged policy for the *kube-system* namespace. For this to work make sure you've `--authorization-mode=Node,RBAC`.
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/privileged-psp.clusterrole.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/privileged-psp-nodes.rolebinding.yaml
+```
+
+Your network provider will also need privileged access. Depending on which you're using the used service account is different. For canal you need to create the following role binding.
+
+```sh
+kubectl create -n kube-system -f - <<EOF
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: privileged-psp-canal
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: privileged-psp
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: canal
+  namespace: kube-system
+EOF
+```
+
+With a *kops* setup you will also need a role binding for the *dns-controller* and *kube-dns-autoscaler*.
+
+```sh
+kubectl create -n kube-system -f - <<EOF
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: privileged-psp-dns
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: privileged-psp
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: kube-dns-autoscaler
+  namespace: kube-system
+- kind: ServiceAccount
+  name: dns-controller
+  namespace: kube-system
+EOF
+```
+
+Before enabling the *PodSecurityPolicy* controller you should check your namespaces for Pods requiring privileged access and create role bindings accordingly. If you're certain all Pods are covered you can add "PodSecurityPolicy" to `--admission-control=...` of your *kube-apiserver* configuration and restart the API.
+
+You can test your setup by creating a deployment like this:
+
+```sh
+kubectl create -f -<<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: privileged
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: privileged
+  template:
+    metadata:
+      labels:
+        name: privileged        
+    spec:
+      containers:
+        - name: pause
+          image: k8s.gcr.io/pause
+          securityContext:
+            privileged: true
+EOF
+```
+
+If all is fine, the *privileged* deployment should fail to create the Pod.
 
 ### Restrict "docker image pull" :fire:
 
@@ -156,7 +266,7 @@ Ultimately Docker is pulling an image, so securing Docker is considered a good a
 
 ### Kubernetes Dashboard :boom:
 
-Prio to version 1.8.0, the `kubernetes-dashboard` plugin was granted a Service Account with full cluster access to be able to see and manage all aspects of the cluster.
+Prio to version 1.8.0, the `kubernetes-dashboard` plugin was granted a service account with full cluster access to be able to see and manage all aspects of the cluster.
 
 Verify that there is no ClusterRolebinding to `cluster-admin` left behind. Otherwise clicking `SKIP` on the sign-in page will grant full access.
 
