@@ -1,0 +1,47 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: kube2iam
+  namespace: kube-system
+  labels:
+    app: kube2iam
+spec:
+  template:
+    metadata:
+      labels:
+        app: kube2iam
+    spec:
+      hostNetwork: true
+      serviceAccountName: kube2iam
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      containers:
+        - name: kube2iam
+          image: jtblin/kube2iam:0.10.0
+          imagePullPolicy: Always
+          args:
+            - --host-interface=cali+
+            - --host-ip=$(HOST_IP)
+            - --iptables=true
+            - --app-port=8181
+          env:
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - containerPort: 8181
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8181
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 1
+          securityContext:
+            privileged: true

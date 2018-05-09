@@ -25,10 +25,10 @@ kube2iam acts as a transparent proxy between Pods and the AWS Metdata API. An ip
 **Note** If you're not using canal or calico as your network provider, you need to adjust `--host-interface` in `kube2iam.daemonset.yaml` accordingly, see [kub2iam iptables](https://github.com/jtblin/kube2iam#iptables).
 
 ```sh
-kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/kube2iam.serviceaccount.yaml
-kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/kube2iam.clusterrole.yaml
-kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/kube2iam.clusterrolebinding.yaml
-kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/kube2iam.daemonset.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/AWS/kube2iam.serviceaccount.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/AWS/kube2iam.clusterrole.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/AWS/kube2iam.clusterrolebinding.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/AWS/kube2iam.daemonset.yaml
 ```
 
 This is just a basic setup which will keep Pods from accessing the `/meta-data/iam/security-credentials` endpoint all other endpoints are transparently proxied and no restrictions applied. If Pods don't need AWS API access, the API should be firewalled from Pods altogether.
