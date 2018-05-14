@@ -158,8 +158,19 @@ Most (almost all) of your Pods don't need privileged access or even host access,
 
 A very basic setup consists of a unprivileged and a privileged policy. The unprivileged is called "default" and the privileged is called, well, "privileged".
 
+**Important:** Check if you're cluster nodes support AppArmor or not, as different default policies need to be created accordingly.
+
+With AppArmor:
+
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/default.psp.yaml
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/privileged.psp.yaml
+```
+
+Without AppArmor:
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/default-non-apparmor.psp.yaml
 kubectl apply -f https://raw.githubusercontent.com/freach/kubernetes-security-best-practice/master/PSP/privileged.psp.yaml
 ```
 
