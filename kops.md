@@ -62,7 +62,6 @@ spec:
     - DefaultStorageClass
     - DefaultTolerationSeconds
     - NodeRestriction
-    - Priority
     - ResourceQuota
     - AlwaysPullImages
     - DenyEscalatingExec
