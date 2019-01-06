@@ -27,7 +27,7 @@ with your system running Kubernetes. Go through some guides for securing your OS
 
 Here are some to begin with:
 
-* [Red Hat Enterprise Linux 6 Security Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/pdf/security_guide/Red_Hat_Enterprise_Linux-6-Security_Guide-en-US.pdf) *(Linux in general)*
+* [Red Hat Enterprise Linux 7 Security Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/pdf/security_guide/Red_Hat_Enterprise_Linux-7-Security_Guide-en-US.pdf) *(Linux in general)*
 
 ### Private topology :partly_sunny:
 
