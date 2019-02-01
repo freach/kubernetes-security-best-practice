@@ -2,10 +2,6 @@
 
 This document acts as a best practice guide to Kubernetes security. K8s is a powerful platform which can be abused in many ways if not configured properly. The authors of this guide are running Kubernetes in production and worked on several K8s projects to learn about security flaws the hard way.
 
-* [General Security Guide](#general)
-* [Cloud Provider Security Guide](#cloud-provider-guide)
-* [Installer Security Guide](#installer-guide)
-
 The severity or importance of each topic is indicated by an emoji in the topic name.
 
 * :boom: Critical
@@ -17,6 +13,41 @@ If you're more into watching talks on YouTube, here are some really nice ones:
 
 * [Hacking and Hardening Kubernetes Clusters by Example [I] - Brad Geesaman, Symantec](https://www.youtube.com/watch?v=vTgQLzeBfRU)
 * [Shipping in Pirate-Infested Waters: Practical Attack and Defense in Kubernetes [A] - Greg Castle](https://www.youtube.com/watch?v=ohTq0no0ZVU)
+
+## Table of contents
+<!-- Update with `doctoc --notitle README.md`. See https://github.com/thlorenz/doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [General](#general)
+  - [Your cluster is as secure as the system running it :fire:](#your-cluster-is-as-secure-as-the-system-running-it-fire)
+  - [Private topology :partly_sunny:](#private-topology-partly_sunny)
+  - [Firewall ports :fire:](#firewall-ports-fire)
+  - [Bastion host :cloud:](#bastion-host-cloud)
+  - [Kubernetes Security Scan with kube-bench :fire:](#kubernetes-security-scan-with-kube-bench-fire)
+  - [API settings](#api-settings)
+    - [Authorization mode & anonymous auth :boom:](#authorization-mode--anonymous-auth-boom)
+    - [Insecure Port :boom:](#insecure-port-boom)
+    - [Disable Profiling :cloud:](#disable-profiling-cloud)
+    - [AdmissionController](#admissioncontroller)
+      - [AlwaysPullImages :cloud:](#alwayspullimages-cloud)
+      - [DenyEscalatingExec :boom:](#denyescalatingexec-boom)
+      - [PodSecurityPolicy :boom:](#podsecuritypolicy-boom)
+  - [Kublet settings](#kublet-settings)
+    - [Authorization mode & anonymous auth :boom:](#authorization-mode--anonymous-auth-boom-1)
+- [Auto mount default Service Account](#auto-mount-default-service-account)
+  - [Use Network Policies :cloud:](#use-network-policies-cloud)
+  - [Use Pod Security Policies :cloud:](#use-pod-security-policies-cloud)
+  - [Restrict "docker image pull" :fire:](#restrict-docker-image-pull-fire)
+  - [Kubernetes Dashboard :boom:](#kubernetes-dashboard-boom)
+  - [Securing a Cluster (by Kubernetes project)](#securing-a-cluster-by-kubernetes-project)
+- [Cloud Provider Guide](#cloud-provider-guide)
+- [Installer Guide](#installer-guide)
+- [Author](#author)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ## General
 
