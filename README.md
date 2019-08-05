@@ -283,7 +283,7 @@ Verify that there is no ClusterRolebinding to `cluster-admin` left behind. Other
 
 `kubectl -n kube-system get clusterrolebinding kubernetes-dashboard -o yaml`
 
-By default the dashboard is not exposed to the public Internet and it should be avoided to change that. Reasons why we could see with the [Tesla hack discovered by RedLock](https://blog.redlock.io/cryptojacking-tesla).
+By default the dashboard is not exposed to the public Internet and it should be avoided to change that. Reasons why we could see with the [Tesla hack discovered by RedLock](https://redlock.io/blog/cryptojacking-tesla).
 
 If you're using a network provider plugin which supports network policies you should also block requests to the dashboard coming from inside the cluster (other Pods). This will not block requests coming through `kubectl proxy`.
 
