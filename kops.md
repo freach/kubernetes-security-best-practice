@@ -102,7 +102,7 @@ If you want to completely shutdown any public access to cluster services follow 
 
 **Warning:** Before changing the API to private you need some kind of VPN or similar to still be able to access the K8s API.
 
-## Chaning DNS zone to private :partly_sunny:
+## Changing DNS zone to private :partly_sunny:
 
 By default the Route53 hosted zone managed by Kubernetes is public. This has the advantage that even with a private topology DNS records (eg. the Bastion host) can still be resolved publicly. The zone can be changed to private by passing the `--dns private` argument to `kops create cluster` or by editing the cluster after creation.
 
